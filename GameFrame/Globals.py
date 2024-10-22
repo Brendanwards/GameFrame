@@ -8,7 +8,8 @@ class Globals:
     SCREEN_HEIGHT = 800
 
     SCORE = 0
-
+    
+    CONTROLS = 0
     # - Set the starting number of lives - #
     LIVES = 3
 
@@ -16,7 +17,7 @@ class Globals:
     window_name = '2025'
 
     # - Set the order of the rooms - #
-    levels = ["Welcome", "Maze", "ScrollingShooter", "BreakOut"]
+    levels = ["Welcome", "GamePlay"]
 
     # - Set the starting level - #
     start_level = 0

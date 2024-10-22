@@ -1,21 +1,17 @@
-from GameFrame import Level
-from GameFrame import TextObject, Globals
+from GameFrame import Level, Globals
+from Objects.title import Score, Controls
 
 class Welcome(Level):
 
     def __init__(self, screen, joysticks):
         Level.__init__(self, screen, joysticks)
 
-class Title(TextObject):
-    
-    def __init__(self, room, x: int, y: int, text=None):
-       
-        # include attributes and methods from TextObject
-        TextObject.__init__(self, room, x, y, text)
+        self.add_room_object(Score(self, 
+                           Globals.SCREEN_WIDTH/2 - 20, 
+                           20, 
+                           str(Globals.SCORE)))
+
+        self.lives = Controls(self, Globals.SCREEN_WIDTH - 800, 400,
+                               str(Globals.CONTROLS))
+        self.add_room_object(self.lives)
         
-        # set values         
-        self.size = 60
-        self.font = 'Arial Black'
-        self.colour = (255,255,255)
-        self.bold = False
-        self.update_text()
