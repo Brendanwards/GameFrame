@@ -85,7 +85,7 @@ class Plane(RoomObject):
         self.room.add_room_object(new_enemy)
         
         # reset time for next Asteroid spawn
-        enemy_spawn_time = random.randint(15, 150)
+        enemy_spawn_time = random.randint(10, 15)
         self.set_timer(enemy_spawn_time, self.spawn_enemy)
 
     def handle_collision(self, other, other_type):
