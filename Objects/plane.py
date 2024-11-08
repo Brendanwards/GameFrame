@@ -1,6 +1,7 @@
 from GameFrame import RoomObject,  Globals
 import pygame
-from Objects.enemys import Asteroid
+from Objects.laser import Laser
+from Objects.enemys import Enemy
 import random
 class Plane(RoomObject):
     """
@@ -18,13 +19,15 @@ class Plane(RoomObject):
         self.set_image(image,100,100)
 
 
-        asteroid_spawn_time = random.randint(15,150)
-        self.set_timer(asteroid_spawn_time, self.spawn_asteroid)
+        enemy_spawn_time = random.randint(15,150)
+        self.set_timer(enemy_spawn_time, self.spawn_enemy)
 
+        # handle events
+        self.register_collision_object("Enemy")
 
         # register events
         self.handle_key_events = True
-        
+        self.can_shoot = True
     def key_pressed(self, key):
         """
         Respond to keypress up and down
@@ -50,7 +53,8 @@ class Plane(RoomObject):
             self.x += 15
         elif key[pygame.K_a]:
             self.x -= 15
-
+        if key[pygame.K_SPACE]:
+            self.shoot_laser()
 
     def keep_in_room(self):
         """
@@ -71,15 +75,49 @@ class Plane(RoomObject):
         self.keep_in_room()
 
 
-    def spawn_asteroid(self):
+    def spawn_enemy(self):
         """
         Randomly spawns a new Asteroid
         """
         # spawn Asteroid and add to room
-        new_asteroid = Asteroid(self.room, self.x, 0)
-        new_asteroid.y = 0 + new_asteroid.height/2
-        self.room.add_room_object(new_asteroid)
+        new_enemy = Enemy(self.room, self.x, 0)
+        new_enemy.y = 0 + new_enemy.height/2
+        self.room.add_room_object(new_enemy)
         
         # reset time for next Asteroid spawn
-        asteroid_spawn_time = random.randint(15, 150)
-        self.set_timer(asteroid_spawn_time, self.spawn_asteroid)
+        enemy_spawn_time = random.randint(15, 150)
+        self.set_timer(enemy_spawn_time, self.spawn_enemy)
+
+    def handle_collision(self, other, other_type):
+        """
+        Handles the collision events for the Asteroid
+        """
+        
+        if other_type == "Ship":
+            self.room.running = False
+
+
+    def shoot_laser(self):
+        """
+        Shoots a laser from the ship
+        """
+        if self.can_shoot:
+            new_laser = Laser(self.room, 
+                            self.x + self.width/2, 
+                            self.y + self.height/2 - 4)
+            self.room.add_room_object(new_laser)
+            self.can_shoot = False
+            self.set_timer(10,self.reset_shot)
+            
+    def reset_shot(self):
+        """
+        Allows ship to shoot again
+        """
+        self.can_shoot = True
+
+    def handle_collision(self, other, other_type):
+        """
+        Handles laser collisions with other registered objects
+        """
+        if other_type == "Enemy":
+            self.room.delete_object(other)
